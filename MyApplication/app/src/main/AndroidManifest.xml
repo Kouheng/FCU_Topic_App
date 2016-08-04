@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.user.myapplication">
+
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- >  他媽的主頁面 也是程式進入點  點擊以繼續的頁面   </!-->
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!-->MainActivity的下頁  將來會做通往偉大的航道之類的 </!-->
+        <activity android:name="com.example.user.myapplication.Activity_switch"
+            android:label="選擇頁面位置"> </activity>
+
+        <!--> 管理者界面的東西就丟這裡吧  資料表以後也放這這樣 </!-->
+        <activity android:name="com.example.user.myapplication.Linking"
+            android:label="傳輸介面"> </activity>
+    </application>
+
+</manifest>
