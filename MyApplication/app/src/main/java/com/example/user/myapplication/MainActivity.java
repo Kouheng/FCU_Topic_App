@@ -14,6 +14,7 @@ import static com.example.user.myapplication.R.layout.*;
 
 /**
  * Created by User on 2016/6/1.
+ * 一個開始頁的概念
  */
 public class MainActivity extends Activity {
 
@@ -33,7 +34,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {   //點擊
                 Intent intent = new Intent();
-                intent.setClass(MainActivity.this,Activity_switch.class);  //用Intent 設定當前頁面,與目標頁面
+                intent.setClass(MainActivity.this,Linking.class);  //用Intent 設定當前頁面,與目標頁面
                 startActivity(intent);  //切換
             }
         });

@@ -47,7 +47,8 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/imageButton4"
                 android:layout_column="3"
-                android:src="@drawable/abc_ic_star_black_36dp" />
+                android:src="@drawable/abc_ic_star_black_36dp"
+                />
         </TableRow>
     </TableLayout>
 

@@ -9,29 +9,73 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.user.myapplication.MainActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Large Text"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal = "true"/>
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:weightSum="1"
+        android:layout_alignBottom="@+id/textView2"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:weightSum="1">
+        android:layout_alignParentStart="true">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="在此實作傳輸資料"
             android:id="@+id/textView"
             android:layout_gravity="center_horizontal" />
 
-        <TextView
-            android:layout_width="wrap_content"
+        <TableLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="傳送資料時會回傳於底下"
-            android:id="@+id/textView2"
-            android:layout_gravity="center_horizontal" />
+            android:layout_weight="0.42">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <CheckBox
+                    android:text="ㄘㄉ"
+                    android:id="@+id/checkBox"
+                    android:layout_column="0"
+                    android:checked="false" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ㄏㄉ"
+                    android:id="@+id/checkBox2"
+                    android:layout_column="1"
+                    android:checked="false" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <CheckBox
+                    android:text=""
+                    android:id="@+id/checkBox3"
+                    android:layout_column="0" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:id="@+id/checkBox4"
+                    android:layout_column="1" />
+            </TableRow>
+        </TableLayout>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -44,7 +88,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="傳送資料"
+                android:text="搜尋"
                 android:id="@+id/button" />
 
             <LinearLayout
@@ -56,19 +100,50 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="New Button"
+                android:text="初始化"
                 android:id="@+id/button2" />
         </LinearLayout>
 
-        <ListView
+        <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="206dp"
-            android:id="@+id/listView" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:weightSum="1">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="文字搜尋"
+                android:id="@+id/button4" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.95"></LinearLayout>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="全部列出"
+                android:id="@+id/button5" />
+        </LinearLayout>
 
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/editText" />
+            android:id="@+id/editText"
+            android:imeOptions="actionDone"
+            android:singleLine="true"
+             />
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="206dp"
+             />
+
     </LinearLayout>
 
 </RelativeLayout>
