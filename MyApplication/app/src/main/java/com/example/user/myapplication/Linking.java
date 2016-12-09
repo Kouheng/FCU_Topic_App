@@ -58,7 +58,7 @@ public class Linking extends AppCompatActivity {
     private double mSpeed;                 //甩動力道數度
     private long mLastUpdateTime;           //觸發時間
 
-    private static final int SPEED_SHRESHOLD = 3000;        //甩動力道數度設定值 (數值越大需甩動越大力，數值越小輕輕甩動即會觸發)
+    private static final int SPEED_SHRESHOLD = 800;        //甩動力道數度設定值 (數值越大需甩動越大力，數值越小輕輕甩動即會觸發)
     private static final int UPTATE_INTERVAL_TIME = 200;     //觸發間隔時間
     /*體感專用區結束*/
 
@@ -493,8 +493,8 @@ public class Linking extends AppCompatActivity {
         /* (type , name , addr , time,tel,web,foodTypeCode)
                     foodType "XXXX" : eat drink  chinese west */
         restaurant_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "1011"));
-        restaurant_list.add(new Restaurant(0, "有間餐廳", "某個地方A", "11:00~22:00", "0912345678", "", "1010"));
-        restaurant_list.add(new Restaurant(2, "一宸的愉悅炒飯", "西屯區文華道138巷6號", "13:00~20:00", "0954865978", "https://www.facebook.com/profile.php?id=100000394006035", "1010"));
+        restaurant_list.add(new Restaurant(0, "有間餐廳", "24.183947, 120.647869", "11:00~22:00", "0912345678", "", "1010"));
+        restaurant_list.add(new Restaurant(2, "一宸的愉悅炒飯", "台中市西屯區西安街277巷77弄1號", "13:00~20:00", "0954865978", "https://www.facebook.com/profile.php?id=100000394006035", "1010"));
         restaurant_list.add(new Restaurant(0, "麥當勞", "台中市西屯區福星路427號", "12:00~20:00", "0954568478", "http://www.mcdonalds.com.tw/", "1001"));
 
         restaurant_list.add(new Restaurant(1, "飲品", "", "", "", "", "0100"));

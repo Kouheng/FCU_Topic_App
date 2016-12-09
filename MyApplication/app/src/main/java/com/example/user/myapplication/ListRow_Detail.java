@@ -1,8 +1,12 @@
 package com.example.user.myapplication;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import static com.example.user.myapplication.R.layout.list_row;
@@ -15,7 +19,7 @@ import static com.example.user.myapplication.R.id;
 public class ListRow_Detail extends AppCompatActivity {
 
     TextView textName, textAddr, textLink , textOpenTime , textTel;
-
+    Button button6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {  //將上一個頁面的資訊丟過來
@@ -27,18 +31,49 @@ public class ListRow_Detail extends AppCompatActivity {
         textLink = (TextView) findViewById(id.row_link);  //網頁
         textOpenTime = (TextView) findViewById(id.row_openTime);
         textTel = (TextView) findViewById(id.row_tel);
+        button6 = (Button) findViewById(id.button6);
 
+
+        String name, addr, openTime, tel, web;
         Bundle params = getIntent().getExtras();  //拆包囉拆包囉~
 
-        textName.setText(params.getString ("name"));
-        textAddr.setText(params.getString ("addr"));
-        textOpenTime.setText(params.getString("openTime"));
-        textTel.setText(params.getString ("tel"));
+        name = params.getString ("name");
+        addr = params.getString ("addr");
+        openTime = params.getString("openTime");
+        tel = params.getString ("tel");
+        web = params.getString ("web");          //網址
 
-        String web = params.getString ("web");          //網址
+        SetOnButtonClick(name, addr);
 
-        textLink.setText(Html.fromHtml("<big><font color=\"#FF0000\"><b>相關網頁與部落格</b></font></big>，網址如下：<br/><br/><a href=\""+ web +"/\">"+ web +"</a>"));
+        textName.setText(name);
+        textAddr.setText(addr);
+        textOpenTime.setText(openTime);
+        textTel.setText(tel);
 
+        assert web != null;   //assert = 斷言  斷言web一定不為空   為空則跳出錯誤   維護用的非必要code
+        if (!web.equals(""))
+            textLink.setText(Html.fromHtml("<big><b>相關網頁與部落格</b></big>，網址如下：<br/><br/><a href=\""+ web +"/\">"+ web +"</a>"));
+        else
+            textLink.setText(Html.fromHtml("<big><b>暫無相關網頁與部落格</b></big>"));
+
+    }
+
+
+    //TODO 把按鈕改成其他東西吧
+    public void SetOnButtonClick(final String name, final String addr) {  //監聽按鈕事件
+        button6.setOnClickListener(new View.OnClickListener() {//設定當觸發後   此按鈕為接收資料
+            @Override
+            public void onClick(View v) {//override
+                //搜尋按鈕的實作
+
+                //http://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q=輸入查詢的地址&z=比例大小&output=embed&t=地圖模式
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                        "http://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q="+ addr +"&z=16&output=embed&t="));
+                //TODO 上面的網址在接資料庫時要把座標改成addr
+                startActivity(i);
+
+            }
+        });
 
     }
 
