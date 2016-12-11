@@ -43,10 +43,9 @@ public class Linking extends AppCompatActivity {
     boolean checkBoxState, checkBox2State;  //紀錄狀態用的,在此不用宣告final
     static boolean textSearchFlag = false;      //文字搜尋開啟
     static boolean sensorFlag = false;         //體感的flag
-    static boolean debugFlag = false;         //靜態資料的/debug模式
+    static boolean debugFlag = true;         //靜態資料的/debug模式
     final static String foodTypeAllNull = "0000";
     //TODO debug模式和一些資料定義在這裡改  而且有全空的0000編碼
-    //TODO 把編碼的定義整理到一個新的class吧
 
     List<Restaurant> restaurant_list = new ArrayList<Restaurant>();      //list
 
@@ -86,7 +85,7 @@ public class Linking extends AppCompatActivity {
         final ListView listV = (ListView) findViewById(id.listView);
 
         String text2 = "連結到網頁";
-        final String url = "http://www.mcdonalds.com.tw/";
+        final String url = "http://36.235.45.138/test";
         textView.setText("今天吃什麼");
         textView2.setText(Html.fromHtml("<br/><br/><a href=\""+ url +"/\">"+ text2 +"</a>"));
 
@@ -299,12 +298,14 @@ public class Linking extends AppCompatActivity {
                     temp_list.add((Restaurant) rowObject);
             }
         }
+
         if (!"".equals(searchName)) {
             Toast.makeText(getApplicationContext(), "搜尋 " + searchName + " 的結果", Toast.LENGTH_SHORT).show();             //     文字搜尋
         }
 
         MyAdapter myAdapterTemp = new MyAdapter(Linking.this, temp_list);
         listV.setAdapter(myAdapterTemp);
+        setRestaurantType(listV);
     }
 
     /**
@@ -341,6 +342,32 @@ public class Linking extends AppCompatActivity {
         }//for i
 
         return true;
+    }
+
+    /*這裡可以設定list的顏色避免亂掉  Type 1 = 條目/標題  Type0/2 = 兩種顏色*/
+    public void setRestaurantType(ListView listV){
+        Adapter adapter = listV.getAdapter();  //先把list要用的東西拿出來
+        boolean typeFlag = false;
+
+        for (int position = 0; position < adapter.getCount(); position++) {
+
+            Object rowObject = adapter.getItem(position);
+            Restaurant resTemp = (Restaurant) rowObject;    //先做強制轉型
+
+            if (resTemp.getType() != 1){  //判斷不是條目
+                if (!typeFlag) {
+                    resTemp.setType(0);     //給定顏色
+                    typeFlag = true;
+                }
+                else{
+                    resTemp.setType(2);     //另一個顏色
+                    typeFlag = false;
+                }
+
+            }
+            else typeFlag = false;      //如果是條目就重置flag 避免跟條目同顏色
+        }
+
     }
 
 
@@ -477,7 +504,6 @@ public class Linking extends AppCompatActivity {
                     //  體感修改區
 
                     editText.setText("");
-                    //TODO  要按照打勾的方式處理  e.g.勾吃的只會隨機出吃的
 
                     ListView listV = (ListView) findViewById(id.listView);   //對xml裡對應的list做修改
 
@@ -506,7 +532,7 @@ public class Linking extends AppCompatActivity {
                     MyAdapter adapter = new MyAdapter(Linking.this, temp_list);   //設到listView
                     listV.setAdapter(adapter);
 
-                    if (getCheckBoxStateALL().equals(foodTypeAllNull))
+                    if (!getCheckBoxStateALL().contains("1"))
                         Toast.makeText(getApplicationContext(), "隨機雷你!", Toast.LENGTH_SHORT).show();
                     else
                         Toast.makeText(getApplicationContext(), "根據勾選標籤的隨機結果的隨機雷你!", Toast.LENGTH_SHORT).show();
@@ -540,16 +566,20 @@ public class Linking extends AppCompatActivity {
 
         /* (type , name , addr , time,tel,web,foodTypeCode)
                     foodType "XXXXXX" : 6碼 1:吃的  2:喝的 3:中式/茶飲  4:西式/咖啡  5:日式/酒類  6:韓式 */
-        restaurant_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "1011"));
-        restaurant_list.add(new Restaurant(0, "有間餐廳", "24.183947, 120.647869", "11:00~22:00", "0912345678", "", "1010"));
-        restaurant_list.add(new Restaurant(2, "一宸的愉悅炒飯", "台中市西屯區西安街277巷77弄1號", "13:00~20:00", "0954865978", "https://www.facebook.com/profile.php?id=100000394006035", "101001"));
-        restaurant_list.add(new Restaurant(0, "麥當勞", "台中市西屯區福星路427號", "12:00~20:00", "0954568478", "http://www.mcdonalds.com.tw/", "1001"));
+        if (debugFlag) {
+            restaurant_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "101111"));
+            restaurant_list.add(new Restaurant(0, "有間餐廳", "24.183947, 120.647869", "11:00~22:00", "0912345678", "", "1010"));
+            restaurant_list.add(new Restaurant(2, "一宸的愉悅炒飯", "台中市西屯區西安街277巷77弄1號", "13:00~20:00", "0954865978", "https://www.facebook.com/profile.php?id=100000394006035", "101001"));
+            restaurant_list.add(new Restaurant(0, "麥當勞", "台中市西屯區福星路427號", "12:00~20:00", "0954568478", "http://www.mcdonalds.com.tw/", "1001"));
 
-        restaurant_list.add(new Restaurant(1, "飲品", "", "", "", "", "0100"));
-        restaurant_list.add(new Restaurant(0, "藍天", "台中市西屯區文華路", "07:00~12:00", "0918765978", "", "0100"));
-        restaurant_list.add(new Restaurant(2, "世界茶", "台中市西屯區文華路", "09:00~20:00", "0954867758", "", "0100"));
-        restaurant_list.add(new Restaurant(0, "85度C", "台中市西屯區河南路二段282號", "12:00~21:00", "0934865978", "", "0100"));
-        //TODO 因為搜尋過後顏色的間隔就沒了  所以顏色要另外設了
+            restaurant_list.add(new Restaurant(1, "飲品", "", "", "", "", "011111"));
+            restaurant_list.add(new Restaurant(0, "藍天", "台中市西屯區文華路", "07:00~12:00", "0918765978", "", "0111"));
+            restaurant_list.add(new Restaurant(2, "世界茶", "台中市西屯區文華路", "09:00~20:00", "0954867758", "", "0110"));
+            restaurant_list.add(new Restaurant(0, "85度C", "台中市西屯區河南路二段282號", "12:00~21:00", "0934865978", "", "0101"));
+        }
+        else{
+            //TODO 資料庫的表從這裡拿  一樣放到 restaurant_list裡
+        }
     }
 
     /*資料全部列出*/

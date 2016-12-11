@@ -12,10 +12,10 @@ public class Restaurant {
     private int Rid;     //餐廳的ID
     private String name;
     private String addr;
-    private String web = ""; //
+    private String web = ""; //網址
     private String openTime = "";
     private String tel = "";
-    private String foodType;
+    private String foodType;   //foodType "XXXXXX" : 6碼 1:吃的  2:喝的 3:中式/茶飲  4:西式/咖啡  5:日式/酒類  6:韓式
 
 
     public Restaurant(){
