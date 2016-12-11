@@ -1,135 +1,120 @@
-package com.example.user.myapplication.DB;
+package jayon.com.eatwhat;
 
+import android.content.Context;
+import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
-import com.example.user.myapplication.Restaurant;
-
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Scanner;
-
-import static java.lang.System.out;
+import java.util.List;
 
 /**
- * Created by kiyot on 2016/10/20.
+ * Created by kiyot on 2016/11/26.
  */
-public class classMethod {
-    String getString;
-    Restaurant restaurant = new Restaurant();
-    int id;
-    String time;
+public class ClassMethod extends AppCompatActivity {
 
-    //初始化資料庫
-    public void CreateDefaultData() throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    DBMethod dbmethod = new DBMethod(this);
+    private Context MethodContext;
+    private Button createTable, dropTable, addData, search_filter;
+    private EditText insertName, insertPhone, editTable, foodStyle, foodType;
 
-        DBMS restaurant_Data = new DBMS();
-        Connection connection = restaurant_Data.getConnection();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        dbmethod.OpenDB();
 
-        restaurant_Data.initialization(connection);
+        //Button Listener 作為測試可自行更改
+        createTable = (Button) findViewById(R.id.create_table);
+        dropTable = (Button) findViewById(R.id.drop_table);
+        addData = (Button) findViewById(R.id.add_data);
+        search_filter = (Button) findViewById(R.id.search_data);
+
+        insertName = (EditText) findViewById(R.id.insert_name);
+        insertPhone = (EditText) findViewById(R.id.insert_phone);
+        editTable = (EditText) findViewById(R.id.edit_table);
+        foodType = (EditText) findViewById(R.id.food_type);
+        foodStyle = (EditText) findViewById(R.id.food_style);
+
+        createTable.setOnClickListener(CreateTable);
+        dropTable.setOnClickListener(DropTable);
+        search_filter.setOnClickListener(SearchData);
     }
 
-    public void filterAll() throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException {
+    //手動建立Table
+    private Button.OnClickListener CreateTable = new Button.OnClickListener() {
+        public void onClick(View view) {
+            String table_name = editTable.getText().toString();
+            dbmethod.CreateDBTable(table_name);
+        }
+    };
 
-        DBMS restaurant_Data = new DBMS();
+    //刪除Table
+    private Button.OnClickListener DropTable = new Button.OnClickListener() {
+        public void onClick(View v) {
+            String table_name = editTable.getText().toString();
+            dbmethod.DropDBTable(table_name);
 
-        Connection connection = restaurant_Data.getConnection();
+        }
+    };
 
-        ArrayList getData = restaurant_Data.selectAllTable(connection);
+    //搜尋資料
+    private Button.OnClickListener SearchData = new Button.OnClickListener() {
+        public void onClick(View v) {
 
-        String get = getData.toString();
+            List<Restaurant> ConnectData = new ArrayList<>();
 
-        restaurant.setName(get);
+            ConnectData = dbmethod.GetAllTable();
 
+            for (int i = 0; i < ConnectData.size(); i++) {
 
-        out.println(restaurant.getName());
-    }
+                Log.e("Tag", String.valueOf(ConnectData.get(i).getRid()) + " " +
+                        String.valueOf(ConnectData.get(i).getName()) + " " +
+                        String.valueOf(ConnectData.get(i).getAddress()) + " " +
+                        String.valueOf(ConnectData.get(i).getTel()) + " " +
+                        String.valueOf(ConnectData.get(i).getTime()) + " " +
+                        String.valueOf(ConnectData.get(i).getPicture()) + " " +
+                        String.valueOf(ConnectData.get(i).getScore()) + " " +
+                        String.valueOf(ConnectData.get(i).getTag()));
+            }
+            /*
+            String type = foodType.getText().toString();
+            FoodTypeSearch(type);
+            */
+        }
+    };
 
-    //測試插入資料
-    public void dbTest(String name, String phone) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
+    //Listener 觸發所指定的模糊搜尋
+    public ArrayList<Restaurant> FilterExact(String keyword) {
+        ArrayList<Restaurant> storePackage;
 
-        DBMS dbms = new DBMS();
-        Log.d("mytag","enter1");
-        Connection connection = dbms.getConnection();
-        Log.d("mytag","enter2");
-
-        dbms.insert(connection, name, phone);
-    }
-
-    //查詢資料Method
-    public static ArrayList<Restaurant> filterExact() throws SQLException, IllegalAccessException, InstantiationException, ClassNotFoundException {
-        DBMS dbms_data = new DBMS();
-        Connection connection = dbms_data.getConnection();  //把資料庫裡面的資料鏈接功能導入
-        String keyword = new String();
-        ArrayList<Restaurant> restaurants;
-
-        restaurants = dbms_data.searchFilter(connection, keyword);
-
+        storePackage = dbmethod.SearchFilter(keyword);
 
         /*for (int i = 0; i < restaurants.size(); i++) {      測試印出治療
             out.print(restaurants.get(i).getRid() + " ");
             out.print(restaurants.get(i).getName() + " ");
             out.println(restaurants.get(i).getTel());
         }*/
-
-
-        return restaurants; //回傳包裝的資料
+        return storePackage; //回傳包裝的資料
     }
 
-    //回傳飲食類型
-    public ArrayList<Restaurant> restaurantsFoodType(String foodTypeSearch) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        DBMS dbms_data = new DBMS();
-        Connection connection = dbms_data.getConnection();
-        ArrayList<Restaurant> foodTypeReturn = dbms_data.foodTypeSearch(connection, foodTypeSearch);
+    //Listener 觸發所指定的標籤查詢
+    public ArrayList<Restaurant> FoodTypeSearch(String label) {
+        ArrayList<Restaurant> storePackage;
 
-        for (int i = 0; i < foodTypeReturn.size(); i++) {
-            //測試印出治療
-            out.print(foodTypeReturn.get(i).getRid() + " ");
-            out.print(foodTypeReturn.get(i).getName() + " ");
-            out.println(foodTypeReturn.get(i).getAddr());
-        }
-        return foodTypeReturn;
+        storePackage = dbmethod.foodTypeSearch(label);
+
+        return storePackage;
     }
 
-    //回傳飲食風格
-    public ArrayList<Restaurant> restaurantsFoodStyle(String foodStyleSearch) throws ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException {
-        DBMS dbms_data = new DBMS();
-        Connection connection = dbms_data.getConnection();
-        ArrayList<Restaurant> foodStyleReturn = dbms_data.foodStyleSearch(connection, foodStyleSearch);
+    //包裝資料表
+    public List<Restaurant> DBListPackage() {
+        List<Restaurant> ConnectData = new ArrayList<>();
 
-        for (int i = 0; i < foodStyleReturn.size(); i++) {
-            //測試印出治療
-            out.print(foodStyleReturn.get(i).getRid() + " ");
-            out.print(foodStyleReturn.get(i).getName() + " ");
-            out.println(foodStyleReturn.get(i).getAddr());
-        }
-        return foodStyleReturn;
+        ConnectData = dbmethod.GetAllTable();
+
+        return ConnectData;
     }
-
-    public String conVertToString(ArrayList<String> strings) {
-        StringBuilder builder = new StringBuilder();
-        for (String string : strings) {
-            builder.append(string);
-        }
-
-        builder.setLength(builder.length() - 1);
-        return builder.toString();
-    }
-
-    public static void main(String[] args) throws SQLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
-        Scanner scanner = new Scanner(System.in);
-        classMethod run = new classMethod();
-        // run.filterAll();
-        String typing_name;
-        String typing_phne;
-
-        out.print("insert name:");
-        typing_name = scanner.next();
-
-        out.print("insert phone:");
-        typing_phne = scanner.next();
-
-        run.dbTest(typing_name,typing_phne);
-    }
-
 }

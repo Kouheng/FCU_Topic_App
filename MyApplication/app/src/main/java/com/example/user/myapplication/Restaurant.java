@@ -21,38 +21,7 @@ public class Restaurant {
     public Restaurant(){
 
     }
-    public Restaurant(int type, String name, String addr) {
-        this.type = type;
-        this.name = name;
-        this.addr = addr;
-    }
-
-    public Restaurant(int type, String name, String addr, String web) {
-        this.type = type;
-        this.name = name;
-        this.addr = addr;
-        this.web = web;
-    }
-
-    public Restaurant(int type, String name, String addr, String openTime , String tel)
-    {
-        this.type = type;
-        this.name = name;
-        this.addr = addr;
-        this.openTime = openTime;
-        this.tel = tel;
-    }
-
-    public Restaurant(int type, String name, String addr, String openTime , String tel, String web)
-    {
-        this.type = type;
-        this.name = name;
-        this.addr = addr;
-        this.openTime = openTime;
-        this.tel = tel;
-        this.web = web;
-    }
-
+    
     public Restaurant(int type, String name, String addr, String openTime , String tel, String web,String foodType)
     {
         this.type = type;
