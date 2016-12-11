@@ -71,9 +71,23 @@
                 <CheckBox
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text=""
                     android:id="@+id/checkBox4"
-                    android:layout_column="1" />
+                    android:layout_column="1"
+                    android:checked="false" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox5"
+                    android:layout_column="2"
+                    android:checked="false" />
+
+                <CheckBox
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/checkBox6"
+                    android:layout_column="3"
+                    android:checked="false" />
             </TableRow>
         </TableLayout>
 

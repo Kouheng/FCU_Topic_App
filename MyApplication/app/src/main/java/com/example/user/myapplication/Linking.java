@@ -38,13 +38,15 @@ public class Linking extends AppCompatActivity {
     TextView textView , textView2;
     Button button, button2, button4, button5;
     EditText editText;
-    CheckBox checkBox, checkBox2, checkBox3, checkBox4;
+    CheckBox checkBox, checkBox2, checkBox3, checkBox4, checkBox5, checkBox6;
 
     boolean checkBoxState, checkBox2State;  //紀錄狀態用的,在此不用宣告final
     static boolean textSearchFlag = false;      //文字搜尋開啟
     static boolean sensorFlag = false;         //體感的flag
     static boolean debugFlag = false;         //靜態資料的/debug模式
-    //TODO debug模式在這裡改
+    final static String foodTypeAllNull = "0000";
+    //TODO debug模式和一些資料定義在這裡改  而且有全空的0000編碼
+    //TODO 把編碼的定義整理到一個新的class吧
 
     List<Restaurant> restaurant_list = new ArrayList<Restaurant>();      //list
 
@@ -78,6 +80,8 @@ public class Linking extends AppCompatActivity {
         checkBox2 = (CheckBox) findViewById(id.checkBox2);
         checkBox3 = (CheckBox) findViewById(id.checkBox3);
         checkBox4 = (CheckBox) findViewById(id.checkBox4);
+        checkBox5 = (CheckBox) findViewById(id.checkBox5);
+        checkBox6 = (CheckBox) findViewById(id.checkBox6);
 
         final ListView listV = (ListView) findViewById(id.listView);
 
@@ -201,29 +205,41 @@ public class Linking extends AppCompatActivity {
     /*checkBox邏輯判斷，用來設定按鈕的互斥*/
     public void checkBoxlogic() {
 
-
-
+        checkBox3.setChecked(false);
+        checkBox4.setChecked(false);
+        checkBox5.setChecked(false);
+        checkBox6.setChecked(false);
         /*都沒按下則隱藏底下的多的選項*/
         if (!checkBoxState && !checkBox2State) {   //輕鬆初始化+取消顯示
-            checkBox3.setChecked(false);
-            checkBox4.setChecked(false);
             checkBox3.setVisibility(View.GONE);
             checkBox4.setVisibility(View.GONE);
+            checkBox5.setVisibility(View.GONE);
+            checkBox6.setVisibility(View.GONE);
         }
         /*按下ㄘㄉ*/
         else if (checkBoxState) {
             checkBox3.setText("中餐");
             checkBox4.setText("西餐");
+            checkBox5.setText("日式");
+            checkBox6.setText("韓式");
+
             checkBox3.setVisibility(View.VISIBLE);
             checkBox4.setVisibility(View.VISIBLE);
+            checkBox5.setVisibility(View.VISIBLE);
+            checkBox6.setVisibility(View.VISIBLE);
             //SystemClock.sleep(100);
         }
         /*按下ㄏㄉ*/
         else {
-            checkBox3.setChecked(false);
-            checkBox4.setChecked(false);
-            checkBox3.setVisibility(View.GONE);
-            checkBox4.setVisibility(View.GONE);
+            checkBox3.setText("茶飲");
+            checkBox4.setText("咖啡");
+            checkBox5.setText("酒類");
+
+            checkBox3.setVisibility(View.VISIBLE);
+            checkBox4.setVisibility(View.VISIBLE);
+            checkBox5.setVisibility(View.VISIBLE);
+            checkBox6.setVisibility(View.GONE);
+
             //SystemClock.sleep(100);
         }
 
@@ -236,6 +252,8 @@ public class Linking extends AppCompatActivity {
         stateCode = getCheckBoxStateSingle(checkBox2, stateCode);
         stateCode = getCheckBoxStateSingle(checkBox3, stateCode);
         stateCode = getCheckBoxStateSingle(checkBox4, stateCode);
+        stateCode = getCheckBoxStateSingle(checkBox5, stateCode);
+        stateCode = getCheckBoxStateSingle(checkBox6, stateCode);
 
         return stateCode;
     }
@@ -275,7 +293,7 @@ public class Linking extends AppCompatActivity {
 
             // 接著進行標籤搜尋
             if (nameFlag) {
-                Log.d("mytag", getCheckBoxStateALL() + " and " + resTemp.getFoodType());
+                //Log.d("mytag", getCheckBoxStateALL() + " and " + resTemp.getFoodType());
 
                 if (foodTypeSearch(resTemp.getFoodType())) //符合條件就放進去
                     temp_list.add((Restaurant) rowObject);
@@ -295,7 +313,20 @@ public class Linking extends AppCompatActivity {
      * 但如果使用者有勾選 = 1  意義為要進行比對  如果使用者有勾"喝的"  那就一定要有標籤"喝的"
      */
     public boolean foodTypeSearch(String s) {
-        String check = getCheckBoxStateALL();
+        String check = getCheckBoxStateALL();       //勾選的狀態/標籤
+        int s_length = s.length();                  //拿兩個字串的長度
+        int check_length = check.length();
+
+        if (s_length < check_length){
+            for (int i = 0; i < (check_length - s_length); i++) //長度不符補0
+                s += "0";
+        }
+
+        else if (s_length > check_length){
+            for (int i = 0; i < s_length-check_length; i++) //長度不符補0
+                check += "0";
+        }
+
         for (int i = 0; i < check.length(); i++) {
             switch (check.charAt(i)) {
                 case '1'://進行比對
@@ -388,8 +419,7 @@ public class Linking extends AppCompatActivity {
         /*初始化選項*/
         checkBox.setChecked(false);
         checkBox2.setChecked(false);
-        checkBox3.setChecked(false);
-        checkBox4.setChecked(false);
+
         checkBoxlogic();
         editText.setVisibility(View.GONE);
         editText.setText(null);     //清空吧
@@ -445,25 +475,43 @@ public class Linking extends AppCompatActivity {
                     //達到搖一搖甩動後要做的事情
                     //Log.d("TAG","搖一搖中...");  //這個會顯示在編譯器裡
                     //  體感修改區
-                    Toast.makeText(getApplicationContext(), "隨機雷你!", Toast.LENGTH_SHORT).show();                                            //體感修改區
+
                     editText.setText("");
-                    //TODO  要按照打勾的方式處理  e.g.勾吃的只會隨機出吃的 (另把edittext清空)
+                    //TODO  要按照打勾的方式處理  e.g.勾吃的只會隨機出吃的
 
                     ListView listV = (ListView) findViewById(id.listView);   //對xml裡對應的list做修改
 
-                    List<Restaurant> temp_list;
-                    int length = restaurant_list.size();
-                    do{
-                        temp_list = restaurant_list;
-                        int random = (int)(Math.random()*length);   //random 產生0~1的double  乘上長度再強制轉型 就會變成0~長度
-                        temp_list = temp_list.subList(random,random+1);
-                        Log.d("mytag",temp_list.get(0).getName());
-                    }while (temp_list.get(0).getType()==1);             //這是為了避免骰到條目  像吃的喝的
+                    List<Restaurant> temp_list = new ArrayList<>();
+                    Restaurant resTemp;
 
-                    MyAdapter adapter = new MyAdapter(Linking.this, temp_list);
+                    setData(listV);  //全部列出的資料
+                    search(listV);  //拿去做搜尋
+                    Adapter temp_adapter = listV.getAdapter();
+
+                    int length = temp_adapter.getCount();  //取得長度
+                    do{
+                        int random = (int)(Math.random()*length);   //random 產生0~1的double  乘上長度再強制轉型 就會變成0~長度
+
+
+                        Object rowObject = temp_adapter.getItem(random);
+
+                        resTemp = (Restaurant) rowObject;
+
+
+                        Log.d("mytag",resTemp.getName()+" random");
+                    }while (resTemp.getType()==1);             //這是為了避免骰到條目  像吃的喝的
+
+                    temp_list.add(resTemp);  //把抓到的隨機丟進去
+                    Log.d("mytag","not null here");
+                    MyAdapter adapter = new MyAdapter(Linking.this, temp_list);   //設到listView
                     listV.setAdapter(adapter);
 
-                    sensorFlag = true;      //TODO  這個flag看要不要再處理一下
+                    if (getCheckBoxStateALL().equals(foodTypeAllNull))
+                        Toast.makeText(getApplicationContext(), "隨機雷你!", Toast.LENGTH_SHORT).show();
+                    else
+                        Toast.makeText(getApplicationContext(), "根據勾選標籤的隨機結果的隨機雷你!", Toast.LENGTH_SHORT).show();
+
+                    sensorFlag = true;
                 }
 
 
@@ -491,10 +539,10 @@ public class Linking extends AppCompatActivity {
     private void createData() {
 
         /* (type , name , addr , time,tel,web,foodTypeCode)
-                    foodType "XXXX" : eat drink  chinese west */
+                    foodType "XXXXXX" : 6碼 1:吃的  2:喝的 3:中式/茶飲  4:西式/咖啡  5:日式/酒類  6:韓式 */
         restaurant_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "1011"));
         restaurant_list.add(new Restaurant(0, "有間餐廳", "24.183947, 120.647869", "11:00~22:00", "0912345678", "", "1010"));
-        restaurant_list.add(new Restaurant(2, "一宸的愉悅炒飯", "台中市西屯區西安街277巷77弄1號", "13:00~20:00", "0954865978", "https://www.facebook.com/profile.php?id=100000394006035", "1010"));
+        restaurant_list.add(new Restaurant(2, "一宸的愉悅炒飯", "台中市西屯區西安街277巷77弄1號", "13:00~20:00", "0954865978", "https://www.facebook.com/profile.php?id=100000394006035", "101001"));
         restaurant_list.add(new Restaurant(0, "麥當勞", "台中市西屯區福星路427號", "12:00~20:00", "0954568478", "http://www.mcdonalds.com.tw/", "1001"));
 
         restaurant_list.add(new Restaurant(1, "飲品", "", "", "", "", "0100"));
