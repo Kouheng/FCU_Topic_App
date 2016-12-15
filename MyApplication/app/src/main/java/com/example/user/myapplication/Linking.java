@@ -1,5 +1,8 @@
 package com.example.user.myapplication;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Context;
 import android.hardware.Sensor;
@@ -7,6 +10,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
@@ -23,6 +27,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
+import com.example.user.myapplication.DB.ClassMethod;
+import com.example.user.myapplication.DB.DBMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,10 +51,10 @@ public class Linking extends AppCompatActivity {
     static boolean textSearchFlag = false;      //文字搜尋開啟
     static boolean sensorFlag = false;         //體感的flag
     static boolean debugFlag = true;         //靜態資料的/debug模式
-    final static String foodTypeAllNull = "0000";
     //TODO debug模式和一些資料定義在這裡改  而且有全空的0000編碼
 
     List<Restaurant> restaurant_list = new ArrayList<Restaurant>();      //list
+    ClassMethod classMethod;            //我們的資料庫哦哦哦哦哦哦
 
 
     /*這邊體感專用區*/
@@ -68,6 +75,7 @@ public class Linking extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(activity_main);
+
         textView = (TextView) findViewById(id.textView);
         textView2 = (TextView) findViewById(id.textView2);  //連結到網頁
         button = (Button) findViewById(id.button);
@@ -85,7 +93,7 @@ public class Linking extends AppCompatActivity {
         final ListView listV = (ListView) findViewById(id.listView);
 
         String text2 = "連結到網頁";
-        final String url = "http://36.235.45.138/test";
+        final String url = "http://36.233.50.249/test";
         textView.setText("今天吃什麼");
         textView2.setText(Html.fromHtml("<br/><br/><a href=\""+ url +"/\">"+ text2 +"</a>"));
 
@@ -95,11 +103,10 @@ public class Linking extends AppCompatActivity {
         mSensorManager.registerListener(SensorListener, mSensor, SensorManager.SENSOR_DELAY_GAME);  //註冊體感(Sensor)甩動觸發Listener
         /*體感結束*/
 
-        /*初始化*/
 
 
-        initialization(listV);
-        createData();     //設定資料
+
+
         //button4.setVisibility(View.GONE);
 
 
@@ -109,23 +116,76 @@ public class Linking extends AppCompatActivity {
         /*final MyAdapter adapter = new MyAdapter(Linking.this, restaurant_list);
         listV.setAdapter(adapter);*/
 
-        /*list的Listener*/                                                                        //單項list row的點擊事件
-        listV.post(new Runnable() {
+
+        Log.d("mytag","run");
+        new Thread(new Runnable() {
+
+            final Dialog dialog = ProgressDialog.show(Linking.this,
+                    "讀取中", "嘗試資料同步中...",true);
             @Override
             public void run() {
-                SetListListener(listV);
-                SetCheckBoxClick();
-                SetOnButtonClick(listV);    //監看按鈕
-                SetTextListener(url);
-                SetEditTextListener(listV);
-            }
-        });
+                try {
+                    setDB();
+                    Thread.sleep(4000);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    dialog.dismiss();
 
+
+
+                    createData();     //設定資料
+                    Log.d("mytag","onRunEnd");
+                }
+            }
+        }).start();
+
+
+        /*list的Listener*/                                                                        //單項list row的點擊事件
+        SetListListener(listV);
+        SetCheckBoxClick();
+        SetOnButtonClick(listV);    //監看按鈕
+        SetTextListener(url);
+        SetEditTextListener(listV);
+
+        /*初始化*/
+        initialization(listV);
 
     }
     //onCreate end
 
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        // TODO Auto-generated method stub
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) { // 攔截返回鍵
+            new AlertDialog.Builder(Linking.this)
+                    .setTitle("確認視窗")
+                    .setMessage("確定要返回嗎?")
+                    .setIcon(drawable.question_mark_icon)
+                    .setPositiveButton("確定",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    android.os.Process.killProcess(android.os.Process.myPid());
+                                }
+                            })
+                    .setNegativeButton("取消",
+                            new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    // TODO Auto-generated method stub
+
+                                }
+                            }).show();
+        }
+        return true;
+    }
 
     /*單項list row的點擊事件 List的Listener*/
     public void SetListListener(final ListView listV) {
@@ -144,6 +204,7 @@ public class Linking extends AppCompatActivity {
                 String openTime = ((Restaurant) rowObject).getOpenTime();
                 String tel = ((Restaurant) rowObject).getTel();
                 String web = ((Restaurant) rowObject).getWeb();
+                String foodType = ((Restaurant) rowObject).getFoodType();
 
                 //Log.d("mytag", "Value is: "+name + addr);                             //測試能不能抓到值
 
@@ -152,6 +213,7 @@ public class Linking extends AppCompatActivity {
                 intent.putExtra("openTime", openTime);
                 intent.putExtra("tel", tel);
                 intent.putExtra("web", web);
+                intent.putExtra("foodType", foodType);
 
                 if (!addr.equals(""))               //這個條件判斷是用在避免你點進去ㄘㄉ
                     startActivity(intent);  //切換
@@ -160,6 +222,7 @@ public class Linking extends AppCompatActivity {
         });
 
     }
+
 
 
     /**
@@ -458,7 +521,6 @@ public class Linking extends AppCompatActivity {
         List<Restaurant> null_list = new ArrayList<Restaurant>();
         MyAdapter adapter = new MyAdapter(Linking.this, null_list);
         listV.setAdapter(adapter);
-        //if (debugFlag)createData(listV);
 
     }
 
@@ -515,22 +577,24 @@ public class Linking extends AppCompatActivity {
                     Adapter temp_adapter = listV.getAdapter();
 
                     int length = temp_adapter.getCount();  //取得長度
-                    do{
-                        int random = (int)(Math.random()*length);   //random 產生0~1的double  乘上長度再強制轉型 就會變成0~長度
+                    if (length!=0) {
+                        do {
+                            int random = (int) (Math.random() * length);   //random 產生0~1的double  乘上長度再強制轉型 就會變成0~長度
 
 
-                        Object rowObject = temp_adapter.getItem(random);
+                            Object rowObject = temp_adapter.getItem(random);
 
-                        resTemp = (Restaurant) rowObject;
+                            resTemp = (Restaurant) rowObject;
 
 
-                        Log.d("mytag",resTemp.getName()+" random");
-                    }while (resTemp.getType()==1);             //這是為了避免骰到條目  像吃的喝的
+                            Log.d("mytag", resTemp.getName() + " random");
+                        } while (resTemp.getType() == 1);             //這是為了避免骰到條目  像吃的喝的
 
-                    temp_list.add(resTemp);  //把抓到的隨機丟進去
-                    Log.d("mytag","not null here");
-                    MyAdapter adapter = new MyAdapter(Linking.this, temp_list);   //設到listView
-                    listV.setAdapter(adapter);
+                        temp_list.add(resTemp);  //把抓到的隨機丟進去
+                        Log.d("mytag", "not null here");
+                        MyAdapter adapter = new MyAdapter(Linking.this, temp_list);   //設到listView
+                        listV.setAdapter(adapter);
+                    }
 
                     if (!getCheckBoxStateALL().contains("1"))
                         Toast.makeText(getApplicationContext(), "隨機雷你!", Toast.LENGTH_SHORT).show();
@@ -567,25 +631,55 @@ public class Linking extends AppCompatActivity {
         /* (type , name , addr , time,tel,web,foodTypeCode)
                     foodType "XXXXXX" : 6碼 1:吃的  2:喝的 3:中式/茶飲  4:西式/咖啡  5:日式/酒類  6:韓式 */
         if (debugFlag) {
-            restaurant_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "101111"));
-            restaurant_list.add(new Restaurant(0, "有間餐廳", "24.183947, 120.647869", "11:00~22:00", "0912345678", "", "1010"));
+            //restaurant_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "101111"));
+            restaurant_list.add(new Restaurant(0, "85度C", "台中市西屯區河南路二段282號", "12:00~21:00", "0934865978", "", "0101"));
             restaurant_list.add(new Restaurant(2, "一宸的愉悅炒飯", "台中市西屯區西安街277巷77弄1號", "13:00~20:00", "0954865978", "https://www.facebook.com/profile.php?id=100000394006035", "101001"));
             restaurant_list.add(new Restaurant(0, "麥當勞", "台中市西屯區福星路427號", "12:00~20:00", "0954568478", "http://www.mcdonalds.com.tw/", "1001"));
 
-            restaurant_list.add(new Restaurant(1, "飲品", "", "", "", "", "011111"));
+            //restaurant_list.add(new Restaurant(1, "飲品", "", "", "", "", "011111"));
             restaurant_list.add(new Restaurant(0, "藍天", "台中市西屯區文華路", "07:00~12:00", "0918765978", "", "0111"));
             restaurant_list.add(new Restaurant(2, "世界茶", "台中市西屯區文華路", "09:00~20:00", "0954867758", "", "0110"));
-            restaurant_list.add(new Restaurant(0, "85度C", "台中市西屯區河南路二段282號", "12:00~21:00", "0934865978", "", "0101"));
+
+            restaurant_list.add(new Restaurant(0, "有間餐廳", "24.183947, 120.647869", "11:00~22:00", "0912345678", "", "1010"));
         }
         else{
-            //TODO 資料庫的表從這裡拿  一樣放到 restaurant_list裡
+            restaurant_list = classMethod.DBListPackage();     //從資料庫抓資料
         }
+        sortList();
+    }
+
+    /*排序資料*/
+    private void sortList(){
+        List<Restaurant> temp_list = new ArrayList<>();
+        Restaurant resTemp;
+        temp_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "101111"));
+        Log.d("mytag","sorted");
+        for (int i = 0; i < restaurant_list.size(); i++) {
+            resTemp = restaurant_list.get(i);
+            if (resTemp.getFoodType().startsWith("10") && resTemp.getType() != 1)
+                temp_list.add(resTemp);
+        }
+        temp_list.add(new Restaurant(1, "飲品", "", "", "", "", "011111"));
+        for (int i = 0; i < restaurant_list.size(); i++) {
+            resTemp = restaurant_list.get(i);
+            if (resTemp.getFoodType().startsWith("01") && resTemp.getType() != 1)
+                temp_list.add(resTemp);
+        }
+
+        restaurant_list = temp_list;
+
     }
 
     /*資料全部列出*/
     private void setData(ListView listV) {
         MyAdapter adapter = new MyAdapter(Linking.this, restaurant_list);
         listV.setAdapter(adapter);
+        setRestaurantType(listV);
+    }
+
+    /*同步資料庫  onCreate有寫一個runable來等他*/
+    private void setDB(){
+        classMethod = new ClassMethod(this);
     }
 
 }

@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import static com.example.user.myapplication.R.layout.list_row;
@@ -18,8 +18,8 @@ import static com.example.user.myapplication.R.id;
  */
 public class ListRow_Detail extends AppCompatActivity {
 
-    TextView textName, textAddr, textLink , textOpenTime , textTel;
-    Button button6;
+    TextView textName, textAddr, textLink , textOpenTime , textTel ,textMap;
+    ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {  //將上一個頁面的資訊丟過來
@@ -31,8 +31,8 @@ public class ListRow_Detail extends AppCompatActivity {
         textLink = (TextView) findViewById(id.row_link);  //網頁
         textOpenTime = (TextView) findViewById(id.row_openTime);
         textTel = (TextView) findViewById(id.row_tel);
-        button6 = (Button) findViewById(id.button6);
-
+        imageView = (ImageView) findViewById(id.imageView);
+        textMap = (TextView) findViewById(id.textView5);
 
         String name, addr, openTime, tel, web;
         Bundle params = getIntent().getExtras();  //拆包囉拆包囉~
@@ -42,8 +42,10 @@ public class ListRow_Detail extends AppCompatActivity {
         openTime = params.getString("openTime");
         tel = params.getString ("tel");
         web = params.getString ("web");          //網址
+        String foodType = params.getString("foodType");
 
-        SetOnButtonClick(name, addr);
+        //textMap.setText(foodType);                            //測試餐廳類型用
+        SetOnImageViewClick(name, addr);
 
         textName.setText(name);
         textAddr.setText(addr);
@@ -60,8 +62,8 @@ public class ListRow_Detail extends AppCompatActivity {
 
 
     //TODO 把按鈕改成其他東西吧
-    public void SetOnButtonClick(final String name, final String addr) {  //監聽按鈕事件
-        button6.setOnClickListener(new View.OnClickListener() {//設定當觸發後   此按鈕為接收資料
+    public void SetOnImageViewClick(final String name, final String addr) {  //監聽按鈕事件
+        imageView.setOnClickListener(new View.OnClickListener() {//設定當觸發後   此按鈕為接收資料
             @Override
             public void onClick(View v) {//override
                 //搜尋按鈕的實作

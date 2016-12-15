@@ -40,7 +40,9 @@ public class Restaurant {
         this.web = web;
     }
     public int getType(){
-        return type;
+        if (type >= 0 && type <= 2)
+            return type;
+        else return 0;
     }
     public void setType(int type){
         this.type = type;

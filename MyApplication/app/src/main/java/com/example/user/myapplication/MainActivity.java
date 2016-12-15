@@ -1,6 +1,8 @@
 package com.example.user.myapplication;
 
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -33,9 +35,28 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {   //點擊
-                Intent intent = new Intent();
+                final Intent intent = new Intent();
                 intent.setClass(MainActivity.this,Linking.class);  //用Intent 設定當前頁面,與目標頁面
-                startActivity(intent);  //切換
+
+                new Thread(new Runnable() {final Dialog dialog = ProgressDialog.show(MainActivity.this,
+                        "讀取中", "請稍候...",true);
+
+                    @Override
+                    public void run() {
+                        try {
+
+                            Thread.sleep(1000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            dialog.dismiss();
+
+                            startActivity(intent);  //切換
+
+                        }
+                    }
+                }).start();
+
             }
         });
 
