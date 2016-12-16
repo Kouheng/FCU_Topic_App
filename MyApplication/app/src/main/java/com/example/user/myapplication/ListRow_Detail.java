@@ -76,7 +76,19 @@ public class ListRow_Detail extends AppCompatActivity {
 
             }
         });
+        textMap.setOnClickListener(new View.OnClickListener() {//設定當觸發後   此按鈕為接收資料
+            @Override
+            public void onClick(View v) {//override
+                //搜尋按鈕的實作
 
+                //http://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q=輸入查詢的地址&z=比例大小&output=embed&t=地圖模式
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                        "http://maps.google.com.tw/maps?f=q&hl=zh-TW&geocode=&q="+ addr +"&z=16&output=embed&t="));
+                //TODO 上面的網址在接資料庫時要把座標改成addr
+                startActivity(i);
+
+            }
+        });
     }
 
 }

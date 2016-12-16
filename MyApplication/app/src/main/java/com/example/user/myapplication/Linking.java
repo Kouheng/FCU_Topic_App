@@ -17,13 +17,16 @@ import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,7 +53,7 @@ public class Linking extends AppCompatActivity {
     boolean checkBoxState, checkBox2State;  //紀錄狀態用的,在此不用宣告final
     static boolean textSearchFlag = false;      //文字搜尋開啟
     static boolean sensorFlag = false;         //體感的flag
-    static boolean debugFlag = true;         //靜態資料的/debug模式
+    static boolean debugFlag = false;         //靜態資料的/debug模式
     //TODO debug模式和一些資料定義在這裡改  而且有全空的0000編碼
 
     List<Restaurant> restaurant_list = new ArrayList<Restaurant>();      //list
@@ -74,7 +77,9 @@ public class Linking extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);      //這三行設定標題顏色 參考書籤
         setContentView(activity_main);
+        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, layout.mytitle);
 
         textView = (TextView) findViewById(id.textView);
         textView2 = (TextView) findViewById(id.textView2);  //連結到網頁
@@ -90,10 +95,15 @@ public class Linking extends AppCompatActivity {
         checkBox5 = (CheckBox) findViewById(id.checkBox5);
         checkBox6 = (CheckBox) findViewById(id.checkBox6);
 
+        final RelativeLayout background = (RelativeLayout)findViewById(R.id.back);
+        background.setBackgroundColor(0xFFFFF8D7);          //這兩行設定背景顏色
+
+
+
         final ListView listV = (ListView) findViewById(id.listView);
 
         String text2 = "連結到網頁";
-        final String url = "http://36.233.50.249/test";
+        final String url = "http://36.235.91.48/test";
         textView.setText("今天吃什麼");
         textView2.setText(Html.fromHtml("<br/><br/><a href=\""+ url +"/\">"+ text2 +"</a>"));
 
@@ -577,7 +587,7 @@ public class Linking extends AppCompatActivity {
                     Adapter temp_adapter = listV.getAdapter();
 
                     int length = temp_adapter.getCount();  //取得長度
-                    if (length!=0) {
+                    if (length > 2) {       //至少要大於兩個條目+兩個暫時沒有資料的長度
                         do {
                             int random = (int) (Math.random() * length);   //random 產生0~1的double  乘上長度再強制轉型 就會變成0~長度
 
@@ -594,12 +604,15 @@ public class Linking extends AppCompatActivity {
                         Log.d("mytag", "not null here");
                         MyAdapter adapter = new MyAdapter(Linking.this, temp_list);   //設到listView
                         listV.setAdapter(adapter);
-                    }
 
-                    if (!getCheckBoxStateALL().contains("1"))
-                        Toast.makeText(getApplicationContext(), "隨機雷你!", Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(getApplicationContext(), "根據勾選標籤的隨機結果的隨機雷你!", Toast.LENGTH_SHORT).show();
+
+                        if (!getCheckBoxStateALL().contains("1"))
+                            Toast.makeText(getApplicationContext(), "隨機雷你!", Toast.LENGTH_SHORT).show();
+                        else
+                            Toast.makeText(getApplicationContext(), "根據勾選標籤的隨機結果的隨機雷你!", Toast.LENGTH_SHORT).show();
+                    }
+                    else Toast.makeText(getApplicationContext(), "資料過少或沒有資料!!", Toast.LENGTH_SHORT).show();
+
 
                     sensorFlag = true;
                 }
@@ -653,11 +666,14 @@ public class Linking extends AppCompatActivity {
         List<Restaurant> temp_list = new ArrayList<>();
         Restaurant resTemp;
         temp_list.add(new Restaurant(1, "\\好吃在哪裡/", "", "", "", "", "101111"));
-        Log.d("mytag","sorted");
-        for (int i = 0; i < restaurant_list.size(); i++) {
+
+        for (int i = 0; i < restaurant_list.size(); i++) {      //把吃的丟進去
             resTemp = restaurant_list.get(i);
             if (resTemp.getFoodType().startsWith("10") && resTemp.getType() != 1)
                 temp_list.add(resTemp);
+        }
+        if (temp_list.size() == 1){     //沒有吃的資料
+            temp_list.clear();
         }
         temp_list.add(new Restaurant(1, "飲品", "", "", "", "", "011111"));
         for (int i = 0; i < restaurant_list.size(); i++) {
@@ -665,9 +681,14 @@ public class Linking extends AppCompatActivity {
             if (resTemp.getFoodType().startsWith("01") && resTemp.getType() != 1)
                 temp_list.add(resTemp);
         }
+        if (temp_list.size() == 1){
+            temp_list.clear();
+            temp_list.add(new Restaurant(1, "暫時沒有資料哦!", "", "", "", "", "101111"));
+        }
+
 
         restaurant_list = temp_list;
-
+        Log.d("mytag","sorted");
     }
 
     /*資料全部列出*/

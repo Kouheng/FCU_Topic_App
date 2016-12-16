@@ -3,6 +3,7 @@ package com.example.user.myapplication.DB;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.text.Html;
 import android.util.Log;
@@ -42,7 +43,7 @@ public class DBMethod {
             SQLiteDatabase db = DH.getWritableDatabase();
             try {
                 inputData = new String[10];
-                URL url = new URL("http://36.233.50.249/test/transferjson.php");
+                URL url = new URL("http://36.235.91.48/test/transferjson.php");
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
                 db.execSQL("DROP TABLE IF EXISTS " + "store_table");
                 DH.reCreate(db);

@@ -35,6 +35,8 @@
         <activity android:name="com.example.user.myapplication.ListRow_Detail"
             android:screenOrientation="portrait"
             android:label="詳細資訊"> </activity>
+        <activity android:name=".CustomTitleBar"
+            android:theme="@style/customTheme">  </activity>
     </application>
 
 </manifest>

@@ -28,17 +28,6 @@ public class ClassMethod  {
 
     }
 
-    public void newDb (Context context){
-        dbmethod = new DBMethod(context); // **首要執行的程式
-        try {
-            Log.d("mytag", "dbme here");
-            dbmethod.SyncData(); //建議放在程式初始化的地方  **次要該執行的程式
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
     //要拿資料就用DBListPackage()
     public List<Restaurant> DBListPackage() {
         List<Restaurant> ConnectData;
